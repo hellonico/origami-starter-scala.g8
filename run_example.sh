@@ -1,13 +1,16 @@
 #!/bin/bash
 # Run a specific example from the starter-scala template
 # Usage: ./run_example.sh [ExampleName]
-# Example: ./run_example.sh CartoonCam
-#          ./run_example.sh CaffeCam
-#          ./run_example.sh CannyFast
-#          ./run_example.sh BasicThresholding
-#          ./run_example.sh JustMat
+# With no argument, uses fzf to interactively pick an example
 
-EXAMPLE=${1:-CartoonCam}
+SCALA_DIR="src/main/g8/src/main/scala"
+
+if [ -z "$1" ]; then
+  EXAMPLE=$(ls "$SCALA_DIR"/*.scala | xargs -n1 basename | sed 's/\.scala$//' | fzf --prompt="Pick an example: " --height=40% --border)
+  [ -z "$EXAMPLE" ] && echo "No example selected." && exit 0
+else
+  EXAMPLE=$1
+fi
 
 echo "Running example: $EXAMPLE"
 cd src/main/g8 && sbt "runMain $EXAMPLE"
